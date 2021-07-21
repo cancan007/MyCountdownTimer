@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.AdapterView
+import android.widget.SeekBar
 import android.widget.Spinner
 import com.example.mycountdowntimer.databinding.ActivityMainBinding
 
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.spinner.onItemSelectedListener =
-            object: AdapterView.OnItemSelectedListener{
+            object: AdapterView.OnItemSelectedListener{// object: おそらく他クラスの一部の関数を簡易的に呼び出すためのもの
 
                 override fun onItemSelected(
                     parent: AdapterView<*>?,  // 選択が発生した親ビュー(spinner)
@@ -87,6 +88,28 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onNothingSelected(parent: AdapterView<*>?){}   //onNothingSelected: 項目が選択されずにスピナーが閉じられた時に呼ばれる関数
             }
+
+        binding.seekBar.setOnSeekBarChangeListener(   // シークバーを操作したときに実行するリスナーを登録しています。
+            object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(   // onProgressChanged: シークバーの値を変更したときの処理
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    timer.cancel()
+                    binding.playStop.setImageResource(
+                        R.drawable.ic_baseline_play_arrow_24
+                    )
+                    val min = progress / 60L
+                    val sec = progress % 60L
+                    binding.timerText.text = "%1d:%2$02d".format(min,sec)
+                    timer = MyCountDownTimer(progress * 1000L, 100)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?){}    // onStartTrackingTouch: シークバーに触れたときの処理
+                override fun onStopTrackingTouch(seekBar: SeekBar?){}     // onStopTrackingTouch: シークバーを話したときの処理
+            }
+        )
     }
 
     override fun onResume(){
