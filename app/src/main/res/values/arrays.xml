@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    string-arrayタグは文字列配列をリソースとしてとうろくするもので、name属性でリソース名を指定-->
+<!--    @array/time_arrで参照-->
+    <string-array name="time_arr">
+       <!-- 配列の各要素はitemタグで定義-->
+        <item>3:00</item>
+        <item>1:00</item>
+        <item>2:00</item>
+        <item>5:00</item>
+        <item>10:00</item>
+        <item>0:10</item>
+    </string-array>
+</resources>

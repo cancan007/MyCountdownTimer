@@ -5,6 +5,9 @@ import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Spinner
 import com.example.mycountdowntimer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -57,6 +60,33 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.spinner.onItemSelectedListener =
+            object: AdapterView.OnItemSelectedListener{
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,  // 選択が発生した親ビュー(spinner)
+                    view: View?,     // 選択されたビュー
+                    position: Int,   // 選択されたビューの位置
+                    id: Long    // 選択された項目のID
+                ){
+                    timer.cancel()
+                    binding.playStop.setImageResource(   // ボタンのアイコンを変更
+                        R.drawable.ic_baseline_play_arrow_24
+                    )
+                    val spinner = parent as? Spinner   // parentをAdapterView型からSpinner型へ変換し、変数に代入
+                    val item = spinner?.selectedItem as? String   //スピナーで選択された項目をString型に変換して変数に取得しています
+                    item?.let{
+                        if(it.isNotEmpty()) binding.timerText.text = it
+                        val times = it.split(":")  // 例: "3:00"なら、3 と 00　に分かれる
+                        val min = times[0].toLong()  // toLong(): 文字列をLong型に変換
+                        val sec = times[1].toLong()
+                        timer = MyCountDownTimer((min * 60 + sec) * 1000, 100)   //1000はミリ秒に対応するため
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?){}   //onNothingSelected: 項目が選択されずにスピナーが閉じられた時に呼ばれる関数
+            }
     }
 
     override fun onResume(){
@@ -72,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                 build()  //SoundPoolクラスのインスタンス化
             }
         soundResId = soundPool.load(this, R.raw.bellsound, 1)  //load: リソースからサウンドファイルを読み込む
-                                     //上記のthisはsoundPool, 戻り値はサウンドID
+                                     //上記のthisはsoundPool, 第二引数はリソースID,  戻り値はサウンドID
     }
 
     override fun onPause(){
